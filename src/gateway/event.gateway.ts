@@ -1,30 +1,26 @@
 import {
+  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  OnGatewayConnection,
-  ConnectedSocket,
+  WsResponse,
 } from '@nestjs/websockets';
+import { from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway(8080, {
+@WebSocketGateway({
   cors: {
     origin: '*',
   },
-  transports: ['websocket']
 })
-export class EventsGateway implements OnGatewayConnection {
-  handleConnection(client: any, ...args: any[]) {
-    console.log('Connected');
-  }
-
+export class EventsGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('events')
-  ping(@MessageBody() data: string,@ConnectedSocket() socket: Socket): string {
-    data = 'pong';
-    return data;
+  @SubscribeMessage('best-dev')
+  receiveMessage( @ConnectedSocket() client: Socket,) {
+    client.emit('response','Damien Marchand FR')
   }
 }
