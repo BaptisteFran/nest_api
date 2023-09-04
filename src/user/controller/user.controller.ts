@@ -9,15 +9,16 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { User } from '../user.model';
-import { CreateUserDto } from '../CreateUserDto';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { SearchUserDto } from '../SearchUserDto';
+import { CreateUserDto } from '../dto/CreateUserDto';
+import { AuthGuard } from '../../auth/auth.guard';
+import { SearchUserDto } from '../dto/SearchUserDto';
 import { Like } from 'typeorm';
 
 @Controller('users')
 export class UserController extends User {
   private readonly users: User;
 
+  // filter les données avec un service (user.service)
   @UseGuards(AuthGuard)
   @Get()
   async findAll() {
@@ -35,13 +36,14 @@ export class UserController extends User {
     user.email = createUserDto.email;
     user.password = hash;
 
+    // on peut return un tableau vide (ou void?)
     return user.save();
   }
 
   @UseGuards(AuthGuard)
   @Get('/search')
-  async search(@Query() query: SearchUserDto) {
-    const user = User.find({
+  async search(@Query() query: SearchUserDto): Promise<User[]> {
+    const user = await User.find({
       where: [
         { username: Like(`%${query.searchreq}%`) },
         { email: Like(`%${query.searchreq}%`) },

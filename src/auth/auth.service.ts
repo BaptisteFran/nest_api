@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/user/user.model';
+import { User } from '../user/user.model';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -13,11 +13,11 @@ export class AuthService {
       },
     });
 
+    // bloc peut rentrer dans un try/catch
     this.comparePassword(password, user.password);
     // generate jwt
     const payload = { sub: user.id, username: user.username };
     const jwt = await this.jwtService.signAsync(payload);
-    console.log(jwt);
     return {
       access_token: jwt,
     };

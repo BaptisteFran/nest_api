@@ -7,15 +7,29 @@
     ></script>
     <script>
       const socket = io('http://localhost:3000');
+
       socket.on('connect', function () {
-        console.log('Connected');
+        console.log('Connected to server');
 
-        socket.emit('best-dev', {  });
+        // Envoyer un message ('bonjour')
+        socket.emit('message', {
+          message : 'test retrieve discution 2',
+          from: 2,
+          to : 1
+        })
+      });
 
-      });
-      socket.on('response', function (data) {
-        console.log('Best dev is : ', data);
-      });
+
+      socket.on('new-message-1',(data)=>{
+        console.log(data)
+      })
+
+      // socket.on('response', (data) => {
+      //   console.log('previous discussion : ' + JSON.stringify(data.previousMessages));
+      //   console.log('message received : ' + data.message + ' from : ' + data.from);
+      // });
+
+
       socket.on('exception', function (data) {
         console.log('event', data);
       });

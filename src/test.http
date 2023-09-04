@@ -4,7 +4,7 @@ POST http://localhost:3000/auth/login HTTP/1.1
 content-type: application/json
 
 {
-    "username": "testUser",
+    "username": "testUser5",
     "password": "test123"
 }
 
@@ -23,8 +23,8 @@ POST http://localhost:3000/users HTTP/1.1
 content-type: application/json
 
 {
-    "username": "testUser3",
-    "email": "baptiste.franel3@gmail.com",
+    "username": "testUser5",
+    "email": "baptiste.franel5@gmail.com",
     "password": "test123"
 }
 
@@ -61,7 +61,7 @@ Authorization: Bearer {{authToken}}
 ###
 // Search by name or email
 @authToken = {{login.response.body.access_token}}
-GET http://localhost:3000/users/search?searchreq=testUser2 HTTP/1.1
+GET http://localhost:3000/users/search?searchreq=test HTTP/1.1
 content-type: application/json
 Authorization: Bearer {{authToken}}
 

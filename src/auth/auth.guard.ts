@@ -1,12 +1,15 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { Request } from 'express';
+
+import { User } from '../user/user.model';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,11 +22,23 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync<{
+        sub: User['id'];
+        username: User[];
+      }>(token, {
         secret: jwtConstants.secret,
       });
-      // add payload to request obj to access it in route handlers
-      request['user'] = payload;
+
+      // Chercher l'utilisateur avec son id dan la base
+      const user = await User.findOne({ where: { id: payload.sub } });
+      // peut / doit faire un findoneorfail
+
+      if (!user) {
+        throw new ForbiddenException('Token is not valid');
+      }
+
+      // utiliser seulement les users nécessaires (id, username...)
+      request.user = user;
     } catch {
       throw new UnauthorizedException();
     }
